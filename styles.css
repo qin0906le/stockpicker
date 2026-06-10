@@ -48,7 +48,10 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
 }
-.market-btn .flag { font-size: 1.25rem; }
+.flag { display: inline-flex; align-items: center; }
+.flag svg { width: 24px; height: 16px; border-radius: 2px; display: block; box-shadow: 0 0 0 1px rgba(255,255,255,0.12); }
+.flag-inline svg { width: 18px; height: 12px; vertical-align: -1px; }
+.flag-inline { vertical-align: middle; margin-right: 2px; }
 .market-btn .exchange {
   font-size: 0.72rem;
   font-weight: 500;
