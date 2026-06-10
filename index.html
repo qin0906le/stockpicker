@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockPicker — Top 3 Stocks by Industry</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <h1>📈 StockPicker</h1>
+      <p class="tagline">Top 3 long-term investment ideas across 5 industries — fundamentals, valuation, moat, catalysts &amp; risks</p>
+      <p class="asof" id="asof"></p>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Industries"></nav>
+
+  <main id="main">
+    <section class="industry-outlook" id="outlook"></section>
+    <section class="cards" id="cards"></section>
+  </main>
+
+  <footer class="footer">
+    <p><strong>Disclaimer:</strong> This app presents research-style analysis for educational purposes only.
+    Figures are approximate and may be outdated. Nothing here is financial advice — always do your own
+    due diligence and consult a licensed advisor before investing.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
