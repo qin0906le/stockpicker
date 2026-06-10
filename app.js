@@ -1,4 +1,5 @@
 (function () {
+  const marketsEl = document.getElementById("markets");
   const tabsEl = document.getElementById("tabs");
   const outlookEl = document.getElementById("outlook");
   const cardsEl = document.getElementById("cards");
@@ -27,9 +28,10 @@
     return "var(--red)";
   }
 
-  function renderIndustry(industry) {
+  function renderIndustry(market, industry) {
     outlookEl.innerHTML = `
       <h2>${industry.emoji} ${industry.name} — Industry Outlook</h2>
+      <p class="market-context">${market.flag} ${market.name} · ${market.exchange} · ${market.currency}</p>
       <p>${industry.outlook}</p>`;
 
     cardsEl.innerHTML = "";
@@ -110,18 +112,35 @@
     });
   }
 
-  STOCK_DATA.industries.forEach((industry, i) => {
+  function renderIndustryTabs(market) {
+    tabsEl.innerHTML = "";
+    market.industries.forEach((industry, i) => {
+      const btn = document.createElement("button");
+      btn.className = "tab" + (i === 0 ? " active" : "");
+      btn.textContent = `${industry.emoji} ${industry.name}`;
+      btn.addEventListener("click", () => {
+        tabsEl.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        btn.classList.add("active");
+        renderIndustry(market, industry);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      tabsEl.appendChild(btn);
+    });
+    renderIndustry(market, market.industries[0]);
+  }
+
+  STOCK_DATA.markets.forEach((market, i) => {
     const btn = document.createElement("button");
-    btn.className = "tab" + (i === 0 ? " active" : "");
-    btn.textContent = `${industry.emoji} ${industry.name}`;
+    btn.className = "market-btn" + (i === 0 ? " active" : "");
+    btn.innerHTML = `<span class="flag">${market.flag}</span> ${market.id} <span class="exchange">${market.exchange}</span>`;
     btn.addEventListener("click", () => {
-      tabsEl.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      marketsEl.querySelectorAll(".market-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      renderIndustry(industry);
+      renderIndustryTabs(market);
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-    tabsEl.appendChild(btn);
+    marketsEl.appendChild(btn);
   });
 
-  renderIndustry(STOCK_DATA.industries[0]);
+  renderIndustryTabs(STOCK_DATA.markets[0]);
 })();

@@ -1,10 +1,14 @@
 # 📈 StockPicker
 
-A zero-dependency web app that presents **top-3 long-term stock picks across 5 industries**,
+A zero-dependency web app that presents **top-3 long-term stock picks across 5 industries
+in each of 3 markets** — 🇺🇸 US (NYSE/NASDAQ), 🇸🇬 Singapore (SGX) and 🇲🇾 Malaysia (Bursa) —
 analyzed like an equity research note: fundamentals, valuation, moat, catalysts, risks,
-confidence score, and risk level for every pick.
+confidence score, and risk level for every pick. Use the market switcher in the header
+to flip between markets.
 
-## Industries & Picks
+## Markets, Industries & Picks
+
+### 🇺🇸 United States (NYSE / NASDAQ)
 
 | Industry | #1 🥇 | #2 🥈 | #3 🥉 |
 |---|---|---|---|
@@ -13,6 +17,26 @@ confidence score, and risk level for every pick.
 | 🧬 Healthcare & Pharma | LLY | ISRG | ABBV |
 | 💳 Payments & Fintech | V | MA | AXP |
 | ⚡ Energy | XOM | CEG | CVX |
+
+### 🇸🇬 Singapore (SGX)
+
+| Industry | #1 🥇 | #2 🥈 | #3 🥉 |
+|---|---|---|---|
+| 🏦 Banking & Finance | DBS (D05) | OCBC (O39) | UOB (U11) |
+| 🏢 REITs | CICT (C38U) | Keppel DC REIT (AJBU) | CapitaLand Ascendas (A17U) |
+| 🛠️ Industrials & Defence | ST Engineering (S63) | Yangzijiang (BS6) | SATS (S58) |
+| 📡 Telecom & Tech | Singtel (Z74) | iFAST (AIY) | Venture Corp (V03) |
+| 🛒 Consumer & Healthcare | Sheng Siong (OV8) | Raffles Medical (BSL) | DFI Retail (D01) |
+
+### 🇲🇾 Malaysia (Bursa Malaysia)
+
+| Industry | #1 🥇 | #2 🥈 | #3 🥉 |
+|---|---|---|---|
+| 🏦 Banking | Public Bank (1295) | Maybank (1155) | CIMB (1023) |
+| ⚡ Utilities & Power | Tenaga (5347) | YTL Power (6742) | Petronas Gas (6033) |
+| 🔬 Technology & Semis | Frontken (0128) | ViTrox (0097) | Inari (0166) |
+| 🛍️ Consumer & Retail | 99 Speed Mart (5326) | Mr D.I.Y. (5296) | QL Resources (7084) |
+| 🏥 Healthcare | IHH (5225) | KPJ (5878) | Hartalega (5168) |
 
 Each stock card includes:
 
@@ -43,12 +67,13 @@ python3 -m http.server 8000
 ```
 index.html   — page shell
 styles.css   — dark dashboard theme
-data.js      — curated analysis data (edit this to update picks)
-app.js       — rendering & interaction logic
+data.js      — curated analysis data for all markets (edit this to update picks)
+app.js       — rendering & interaction logic (market switcher, industry tabs, cards)
 ```
 
 To update or add picks, edit `data.js` — the UI renders whatever is in
-`STOCK_DATA.industries`, so new industries/stocks appear automatically.
+`STOCK_DATA.markets[].industries`, so new markets, industries or stocks
+appear automatically.
 
 ## Disclaimer
 
