@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>紫微斗数排盘分析</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <h1>紫微斗数 · 排盘分析</h1>
+    <p class="subtitle">输入出生资料，自动排盘并生成命盘解读</p>
+  </header>
+
+  <main class="container">
+    <!-- 输入表单 -->
+    <section class="card form-card" id="form-card">
+      <h2>一、基本资料</h2>
+      <form id="birth-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="name">姓名（可选）</label>
+            <input type="text" id="name" placeholder="例：林志勤">
+          </div>
+          <div class="form-field">
+            <label for="gender">性别 <span class="required">*</span></label>
+            <select id="gender" required>
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="birth-date">出生日期（公历） <span class="required">*</span></label>
+            <input type="date" id="birth-date" required min="1900-01-01" max="2100-12-31">
+          </div>
+          <div class="form-field">
+            <label for="birth-time">出生时间 <span class="required">*</span></label>
+            <input type="time" id="birth-time" required>
+            <small id="shichen-hint" class="hint"></small>
+          </div>
+          <div class="form-field form-field-wide">
+            <label for="birth-place">出生地点（可选）</label>
+            <input type="text" id="birth-place" placeholder="例：马来西亚，柔佛，麻坡">
+          </div>
+        </div>
+
+        <h2>二、目前状况（选填）</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="occupation">职业 / 工作状况</label>
+            <input type="text" id="occupation" placeholder="例：软件工程师，已被裁员">
+          </div>
+          <div class="form-field">
+            <label for="marriage">婚姻状态</label>
+            <select id="marriage">
+              <option value="">— 不填写 —</option>
+              <option value="single">未婚</option>
+              <option value="married">已婚</option>
+              <option value="divorced">离异</option>
+              <option value="widowed">丧偶</option>
+            </select>
+          </div>
+          <div class="form-field form-field-wide">
+            <label for="residence">居住国家 / 城市</label>
+            <input type="text" id="residence" placeholder="例：新加坡">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">排盘并分析</button>
+      </form>
+    </section>
+
+    <!-- 结果区域 -->
+    <section id="result" class="hidden">
+      <!-- 基本盘面信息 -->
+      <div class="card" id="basic-info-card">
+        <h2>命盘基本信息</h2>
+        <div id="basic-info" class="basic-info-grid"></div>
+      </div>
+
+      <!-- 十二宫命盘 -->
+      <div class="card">
+        <h2>十二宫命盘</h2>
+        <div id="chart" class="chart-grid"></div>
+        <p class="legend">
+          <span class="tag tag-major">主星</span>
+          <span class="tag tag-lucky">六吉星</span>
+          <span class="tag tag-unlucky">六煞星</span>
+          <span class="tag tag-lu">化禄</span>
+          <span class="tag tag-quan">化权</span>
+          <span class="tag tag-ke">化科</span>
+          <span class="tag tag-ji">化忌</span>
+          <span class="tag tag-borrow">借对宫</span>
+        </p>
+      </div>
+
+      <!-- 文字分析 -->
+      <div class="card">
+        <h2>命盘解读</h2>
+        <div id="analysis"></div>
+      </div>
+
+      <!-- 大限流年 -->
+      <div class="card">
+        <h2>大限与流年</h2>
+        <div id="horoscope"></div>
+      </div>
+
+      <!-- 结合现状 -->
+      <div class="card hidden" id="situation-card">
+        <h2>结合目前状况</h2>
+        <div id="situation"></div>
+      </div>
+
+      <p class="disclaimer">
+        ⚠️ 本工具基于传统紫微斗数三合派排盘规则自动生成解读，内容仅供参考与娱乐，
+        不构成任何医疗、法律、投资或人生决策建议。命运掌握在自己手中。
+      </p>
+    </section>
+  </main>
+
+  <script src="iztro.min.js"></script>
+  <script src="interpretations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
