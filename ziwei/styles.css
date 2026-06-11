@@ -262,6 +262,185 @@ body {
 
 .sihua-item { padding: 4px 0; }
 
+/* ---------- 大限流年深度分析 ---------- */
+.horo-overview {
+  background: #11141c;
+  border-left: 3px solid var(--purple);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin: 10px 0 16px;
+}
+.horo-overview p { margin-bottom: 6px; }
+.horo-overview p:last-child { margin-bottom: 0; }
+
+.horo-sub {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 18px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--card-border);
+  letter-spacing: 1px;
+}
+
+/* 大限三方表格 */
+.horo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+.horo-table th {
+  background: #11141c;
+  color: var(--text-dim);
+  padding: 7px 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--card-border);
+}
+.horo-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #1e2130;
+  vertical-align: middle;
+}
+.horo-table tr:last-child td { border-bottom: none; }
+.horo-table tr:hover td { background: #13172080; }
+.text-dim { color: var(--text-dim); font-size: 0.82rem; }
+
+/* 四化行 */
+.sihua-block { display: flex; flex-direction: column; gap: 8px; }
+.sihua-month { opacity: 0.85; }
+
+.sihua-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 12px;
+  background: #11141c;
+  border-radius: 7px;
+  flex-wrap: wrap;
+}
+.sihua-row .tag { flex-shrink: 0; align-self: center; }
+.sihua-arrow { color: var(--text-dim); flex-shrink: 0; align-self: center; }
+.sihua-dest { flex-shrink: 0; align-self: center; }
+.sihua-role {
+  display: inline-block;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  background: #1e2130;
+  border-radius: 4px;
+  padding: 0 5px;
+  margin-left: 5px;
+}
+.sihua-desc { color: var(--text); font-size: 0.88rem; flex: 1; min-width: 180px; }
+
+/* 叠化徽章 */
+.overlap-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  align-self: center;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.overlap-good  { background: #1d3a26; color: var(--green); border: 1px solid #2e6040; }
+.overlap-bad   { background: #3a1d1d; color: #ff8080;      border: 1px solid #6e3030; }
+.overlap-mixed { background: #3a2e1d; color: #e0a05a;      border: 1px solid #6e5030; }
+.overlap-info  { background: #1d2a3a; color: var(--blue);  border: 1px solid #30506e; }
+
+/* 大限总评 / 今年建议 */
+.horo-summary {
+  background: #11141c;
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin: 14px 0 0;
+}
+.horo-summary p { margin-bottom: 0; }
+
+.horo-tips {
+  background: #0f1520;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+.horo-tips ul { padding-left: 4px; list-style: none; }
+.horo-tips li { padding: 5px 0; font-size: 0.92rem; }
+
+/* 域运卡片 */
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.domain-card {
+  background: #11141c;
+  border-radius: 9px;
+  padding: 12px 13px;
+  border-left: 4px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.84rem;
+}
+.domain-good    { border-left-color: var(--green); }
+.domain-caution { border-left-color: var(--red); }
+.domain-mixed   { border-left-color: var(--quan); }
+.domain-neutral { border-left-color: var(--text-dim); }
+
+.domain-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.domain-icon { font-size: 1.1rem; }
+.domain-title { font-weight: 700; color: var(--text); }
+.domain-tone {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+.domain-good    .domain-tone { background: #1d3a26; color: var(--green); }
+.domain-caution .domain-tone { background: #3a1d1d; color: #ff8080; }
+.domain-mixed   .domain-tone { background: #3a2e1d; color: #e0a05a; }
+.domain-neutral .domain-tone { background: #1e2130; color: var(--text-dim); }
+
+.domain-palace-row { color: var(--text-dim); font-size: 0.78rem; }
+.domain-stars { color: var(--gold-dim); font-size: 0.82rem; min-height: 1.2em; }
+.domain-effects { display: flex; flex-wrap: wrap; gap: 4px; }
+.domain-note { color: var(--text); font-size: 0.82rem; line-height: 1.5; border-top: 1px dashed var(--card-border); padding-top: 5px; }
+.tag-xs { font-size: 0.65rem; padding: 0 4px; }
+
+/* 叠化交会 */
+.overlap-section { display: flex; flex-direction: column; gap: 8px; }
+.overlap-item {
+  background: #11141c;
+  border-radius: 7px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.overlap-item .overlap-badge { flex-shrink: 0; }
+
+/* 响应式 - 域运卡片 */
+@media (max-width: 720px) {
+  .domain-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .domain-grid { grid-template-columns: 1fr; }
+  .horo-table { font-size: 0.78rem; }
+  .horo-table th, .horo-table td { padding: 5px 7px; }
+}
+
 .disclaimer {
   color: var(--text-dim);
   font-size: 0.82rem;
