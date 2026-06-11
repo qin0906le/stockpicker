@@ -45,7 +45,13 @@ Each stock card includes:
 - **Competitive moat** — why the advantage is durable
 - **Catalysts & risks** — what could move the stock, both ways
 - **Confidence score (0–100)** and **risk level** (Low / Medium / High)
+- **Trade plan** — reference price (early 2026), suggested buy-in zone, and a hard
+  cut-loss level (~12–20% below the zone, scaled to the stock's risk rating)
 - **Why it ranks here** — explicit comparison against the alternatives
+
+> ⚠️ Trade levels are anchored to early-2026 prices and do **not** update live.
+> Always check the current quote: if a stock has run far above its buy zone, wait
+> for a pullback or recompute the levels rather than chasing.
 
 ## Running the app
 

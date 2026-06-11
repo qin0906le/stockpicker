@@ -1539,3 +1539,65 @@ const STOCK_DATA = {
     },
   ],
 };
+
+// Suggested trade levels — educational reference only, NOT live signals.
+// "ref" is the approximate market price as of the analysis date (early 2026).
+// Buy zone = suggested accumulation range around that reference price.
+// Cut-loss = hard exit ~12–20% below the zone midpoint (tighter for Low-risk
+// names, wider for volatile ones), placed under technical/valuation support.
+// ALWAYS re-anchor to the live quote before acting: if the stock now trades
+// far above the buy zone, wait for a pullback or recompute the levels —
+// do not chase, and never treat stale levels as current advice.
+const TRADE_LEVELS = {
+  US: {
+    NVDA: { ref: "~$185", buy: "$165 – $185", stop: "$140 (≈ -20%)" },
+    TSM: { ref: "~$290", buy: "$265 – $290", stop: "$230 (≈ -17%)" },
+    AVGO: { ref: "~$350", buy: "$310 – $350", stop: "$265 (≈ -20%)" },
+    CRWD: { ref: "~$470", buy: "$420 – $470", stop: "$365 (≈ -18%)" },
+    PANW: { ref: "~$200", buy: "$180 – $200", stop: "$158 (≈ -17%)" },
+    ZS: { ref: "~$290", buy: "$255 – $290", stop: "$225 (≈ -17%)" },
+    LLY: { ref: "~$1,000", buy: "$900 – $1,000", stop: "$780 (≈ -18%)" },
+    ISRG: { ref: "~$540", buy: "$490 – $540", stop: "$430 (≈ -17%)" },
+    ABBV: { ref: "~$220", buy: "$200 – $220", stop: "$178 (≈ -15%)" },
+    V: { ref: "~$345", buy: "$320 – $345", stop: "$290 (≈ -13%)" },
+    MA: { ref: "~$570", buy: "$530 – $570", stop: "$480 (≈ -13%)" },
+    AXP: { ref: "~$340", buy: "$310 – $340", stop: "$270 (≈ -17%)" },
+    XOM: { ref: "~$115", buy: "$105 – $115", stop: "$94 (≈ -15%)" },
+    CEG: { ref: "~$320", buy: "$285 – $320", stop: "$250 (≈ -17%)" },
+    CVX: { ref: "~$155", buy: "$145 – $158", stop: "$130 (≈ -14%)" },
+  },
+  SG: {
+    DBS: { ref: "~S$44.00", buy: "S$41.50 – S$44.50", stop: "S$37.50 (≈ -13%)" },
+    OCBC: { ref: "~S$17.20", buy: "S$16.20 – S$17.40", stop: "S$14.60 (≈ -13%)" },
+    UOB: { ref: "~S$36.00", buy: "S$33.50 – S$36.50", stop: "S$30.50 (≈ -13%)" },
+    CICT: { ref: "~S$2.20", buy: "S$2.05 – S$2.25", stop: "S$1.86 (≈ -13%)" },
+    KDCREIT: { ref: "~S$2.25", buy: "S$2.05 – S$2.30", stop: "S$1.85 (≈ -15%)" },
+    CLAR: { ref: "~S$2.75", buy: "S$2.60 – S$2.85", stop: "S$2.34 (≈ -14%)" },
+    STENG: { ref: "~S$8.00", buy: "S$7.30 – S$8.10", stop: "S$6.40 (≈ -17%)" },
+    YZJ: { ref: "~S$3.00", buy: "S$2.70 – S$3.05", stop: "S$2.40 (≈ -17%)" },
+    SATS: { ref: "~S$3.30", buy: "S$3.00 – S$3.40", stop: "S$2.65 (≈ -17%)" },
+    SINGTEL: { ref: "~S$4.30", buy: "S$4.00 – S$4.35", stop: "S$3.60 (≈ -14%)" },
+    IFAST: { ref: "~S$7.50", buy: "S$6.80 – S$7.60", stop: "S$5.95 (≈ -17%)" },
+    VENTURE: { ref: "~S$12.00", buy: "S$11.00 – S$12.30", stop: "S$9.90 (≈ -15%)" },
+    SHENG: { ref: "~S$2.15", buy: "S$2.00 – S$2.20", stop: "S$1.82 (≈ -13%)" },
+    RAFFLES: { ref: "~S$1.02", buy: "S$0.95 – S$1.05", stop: "S$0.85 (≈ -15%)" },
+    DFI: { ref: "~US$3.20", buy: "US$2.90 – US$3.30", stop: "US$2.55 (≈ -18%)", note: "DFI trades in USD on SGX" },
+  },
+  MY: {
+    PBBANK: { ref: "~RM4.45", buy: "RM4.30 – RM4.55", stop: "RM3.95 (≈ -11%)" },
+    MAYBANK: { ref: "~RM10.20", buy: "RM9.70 – RM10.40", stop: "RM8.90 (≈ -11%)" },
+    CIMB: { ref: "~RM7.40", buy: "RM7.00 – RM7.60", stop: "RM6.30 (≈ -14%)" },
+    TENAGA: { ref: "~RM13.80", buy: "RM13.00 – RM14.00", stop: "RM11.70 (≈ -13%)" },
+    YTLPOWR: { ref: "~RM4.40", buy: "RM3.95 – RM4.55", stop: "RM3.45 (≈ -19%)" },
+    PETGAS: { ref: "~RM17.80", buy: "RM17.00 – RM18.10", stop: "RM15.40 (≈ -12%)" },
+    FRONTKN: { ref: "~RM4.20", buy: "RM3.85 – RM4.30", stop: "RM3.40 (≈ -17%)" },
+    VITROX: { ref: "~RM3.80", buy: "RM3.45 – RM3.90", stop: "RM3.00 (≈ -18%)" },
+    INARI: { ref: "~RM2.20", buy: "RM2.00 – RM2.30", stop: "RM1.75 (≈ -19%)" },
+    "99SMART": { ref: "~RM2.40", buy: "RM2.20 – RM2.45", stop: "RM2.00 (≈ -14%)" },
+    MRDIY: { ref: "~RM1.70", buy: "RM1.55 – RM1.75", stop: "RM1.38 (≈ -16%)" },
+    QL: { ref: "~RM4.70", buy: "RM4.40 – RM4.80", stop: "RM4.00 (≈ -13%)" },
+    IHH: { ref: "~RM7.20", buy: "RM6.90 – RM7.40", stop: "RM6.20 (≈ -13%)" },
+    KPJ: { ref: "~RM2.70", buy: "RM2.55 – RM2.80", stop: "RM2.25 (≈ -16%)" },
+    HARTA: { ref: "~RM1.70", buy: "RM1.50 – RM1.75", stop: "RM1.30 (≈ -20%)", note: "High-risk cyclical — respect the stop strictly" },
+  },
+};

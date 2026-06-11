@@ -217,6 +217,26 @@ ul.list li {
 ul.list.catalysts li::before { content: "▲"; color: var(--green); position: absolute; left: 0; font-size: 0.7rem; top: 9px; }
 ul.list.risks li::before { content: "▼"; color: var(--red); position: absolute; left: 0; font-size: 0.7rem; top: 9px; }
 
+.trade-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 720px) { .trade-grid { grid-template-columns: 1fr; } }
+.trade-box {
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.trade-box .k { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.trade-box .v { font-size: 1.05rem; font-weight: 800; margin-top: 4px; }
+.trade-box.buy { border-color: var(--green); background: rgba(46,168,114,0.08); }
+.trade-box.buy .v { color: var(--green); }
+.trade-box.stop { border-color: var(--red); background: rgba(229,83,75,0.08); }
+.trade-box.stop .v { color: var(--red); }
+.trade-note { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
+
 .why-above {
   background: rgba(79,140,255,0.08);
   border: 1px solid rgba(79,140,255,0.35);

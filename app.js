@@ -95,6 +95,29 @@
         )
         .join("");
 
+      const trade = (typeof TRADE_LEVELS !== "undefined" && TRADE_LEVELS[market.id] && TRADE_LEVELS[market.id][s.ticker]) || null;
+      const tradeHtml = trade
+        ? `
+          <div class="section">
+            <h3>Trade Plan — Reference Levels (early 2026)</h3>
+            <div class="trade-grid">
+              <div class="trade-box ref">
+                <div class="k">Reference Price</div>
+                <div class="v">${trade.ref}</div>
+              </div>
+              <div class="trade-box buy">
+                <div class="k">Suggested Buy-In Zone</div>
+                <div class="v">${trade.buy}</div>
+              </div>
+              <div class="trade-box stop">
+                <div class="k">Cut-Loss (Hard Exit)</div>
+                <div class="v">${trade.stop}</div>
+              </div>
+            </div>
+            <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to early-2026 prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry.</p>
+          </div>`
+        : "";
+
       card.innerHTML = `
         <div class="card-head" role="button" tabindex="0" aria-expanded="${i === 0}">
           <div class="rank-badge rank-${s.rank}">#${s.rank}</div>
@@ -121,6 +144,7 @@
             <h3>Key Metrics</h3>
             <div class="metrics-grid">${metricsHtml}</div>
           </div>
+          ${tradeHtml}
           <div class="section">
             <h3>Competitive Moat</h3>
             <p>${s.moat}</p>
