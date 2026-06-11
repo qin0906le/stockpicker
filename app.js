@@ -63,6 +63,50 @@
     valuation: "Valuation",
   };
 
+  function fmtMoney(v, cur) {
+    if (v >= 100) return cur + Math.round(v).toLocaleString("en-US");
+    if (v >= 20) return cur + v.toFixed(1);
+    return cur + v.toFixed(2);
+  }
+
+  function tradePlanHtml(trade, pricesAsOf) {
+    const entry = (trade.buyLo + trade.buyHi) / 2;
+    const riskAmt = entry - trade.stop;
+    const rewardAmt = trade.target - entry;
+    const upsidePct = Math.round((trade.target / entry - 1) * 100);
+    let rrLine;
+    if (rewardAmt <= 0) {
+      rrLine = `<p class="rr-line rr-bad">⚠️ Consensus target ${fmtMoney(trade.target, trade.cur)} sits BELOW the current entry zone (${upsidePct}%) — analysts see downside from here. Wait for a much lower entry or skip.</p>`;
+    } else {
+      const rr = rewardAmt / riskAmt;
+      rrLine = `<p class="rr-line">Risk : Reward ≈ <strong>1 : ${rr.toFixed(1)}</strong> — risking ~${trade.riskPct}% to the cut-loss against ~${upsidePct}% upside to the consensus target.</p>`;
+    }
+    return `
+      <div class="section">
+        <h3>Trade Plan — Reference Levels (prices: ${pricesAsOf})</h3>
+        <div class="trade-grid">
+          <div class="trade-box ref">
+            <div class="k">Last Price (${trade.date})</div>
+            <div class="v">${fmtMoney(trade.price, trade.cur)}</div>
+          </div>
+          <div class="trade-box buy">
+            <div class="k">Suggested Buy-In Zone</div>
+            <div class="v">${fmtMoney(trade.buyLo, trade.cur)} – ${fmtMoney(trade.buyHi, trade.cur)}</div>
+          </div>
+          <div class="trade-box stop">
+            <div class="k">Cut-Loss (Hard Exit)</div>
+            <div class="v">${fmtMoney(trade.stop, trade.cur)} <span class="pct">(≈ -${trade.riskPct}%)</span></div>
+          </div>
+          <div class="trade-box target">
+            <div class="k">Consensus Target</div>
+            <div class="v">${fmtMoney(trade.target, trade.cur)}</div>
+          </div>
+        </div>
+        ${rrLine}
+        <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to ${pricesAsOf} prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry. Consensus targets are analyst averages, not guarantees.</p>
+      </div>`;
+  }
+
   function riskClass(risk) {
     const r = risk.toLowerCase();
     if (r.includes("high")) return "risk-high";
@@ -98,28 +142,7 @@
         .join("");
 
       const trade = (typeof TRADE_LEVELS !== "undefined" && TRADE_LEVELS[market.id] && TRADE_LEVELS[market.id][s.ticker]) || null;
-      const pricesAsOf = STOCK_DATA.pricesAsOf || "early 2026";
-      const tradeHtml = trade
-        ? `
-          <div class="section">
-            <h3>Trade Plan — Reference Levels (prices: ${pricesAsOf})</h3>
-            <div class="trade-grid">
-              <div class="trade-box ref">
-                <div class="k">Reference Price</div>
-                <div class="v">${trade.ref}</div>
-              </div>
-              <div class="trade-box buy">
-                <div class="k">Suggested Buy-In Zone</div>
-                <div class="v">${trade.buy}</div>
-              </div>
-              <div class="trade-box stop">
-                <div class="k">Cut-Loss (Hard Exit)</div>
-                <div class="v">${trade.stop}</div>
-              </div>
-            </div>
-            <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to ${pricesAsOf} prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry.</p>
-          </div>`
-        : "";
+      const tradeHtml = trade ? tradePlanHtml(trade, STOCK_DATA.pricesAsOf || "early 2026") : "";
 
       card.innerHTML = `
         <div class="card-head" role="button" tabindex="0" aria-expanded="${i === 0}">

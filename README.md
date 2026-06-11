@@ -45,13 +45,22 @@ Each stock card includes:
 - **Competitive moat** — why the advantage is durable
 - **Catalysts & risks** — what could move the stock, both ways
 - **Confidence score (0–100)** and **risk level** (Low / Medium / High)
-- **Trade plan** — reference price (early 2026), suggested buy-in zone, and a hard
-  cut-loss level (~12–20% below the zone, scaled to the stock's risk rating)
+- **Trade plan** — last price (with quote date), suggested buy-in zone, hard cut-loss
+  (~11–20% below the zone, scaled to the stock's risk rating), analyst **consensus
+  target**, and a computed **risk : reward ratio**. Stocks whose consensus target sits
+  below the current price get an explicit downside warning instead.
 - **Why it ranks here** — explicit comparison against the alternatives
 
-> ⚠️ Trade levels are anchored to early-2026 prices and do **not** update live.
-> Always check the current quote: if a stock has run far above its buy zone, wait
-> for a pullback or recompute the levels rather than chasing.
+> ⚠️ Prices and targets were gathered late May – 11 June 2026 and do **not** update
+> live. Always check the current quote: if a stock has run far above its buy zone,
+> wait for a pullback or recompute the levels rather than chasing.
+
+## Deployment (GitHub Pages)
+
+A workflow at `.github/workflows/deploy-pages.yml` publishes the app to GitHub Pages
+on every push. One-time setup: in the repo go to **Settings → Pages** and set
+**Source: GitHub Actions**. The site then lives at
+`https://<username>.github.io/stockpicker/` and updates automatically.
 
 ## Running the app
 
