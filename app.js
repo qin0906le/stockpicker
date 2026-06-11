@@ -4,7 +4,9 @@
   const outlookEl = document.getElementById("outlook");
   const cardsEl = document.getElementById("cards");
   document.getElementById("asof").textContent =
-    "Analysis as of " + STOCK_DATA.asOf + " · figures approximate · not financial advice";
+    "Analysis as of " + STOCK_DATA.asOf +
+    (STOCK_DATA.pricesAsOf ? " · prices as of " + STOCK_DATA.pricesAsOf : "") +
+    " · figures approximate · not financial advice";
 
   // Inline SVG flags — Windows doesn't render flag emojis, so emojis can't be used here
   const FLAG_SVGS = {
@@ -96,10 +98,11 @@
         .join("");
 
       const trade = (typeof TRADE_LEVELS !== "undefined" && TRADE_LEVELS[market.id] && TRADE_LEVELS[market.id][s.ticker]) || null;
+      const pricesAsOf = STOCK_DATA.pricesAsOf || "early 2026";
       const tradeHtml = trade
         ? `
           <div class="section">
-            <h3>Trade Plan — Reference Levels (early 2026)</h3>
+            <h3>Trade Plan — Reference Levels (prices: ${pricesAsOf})</h3>
             <div class="trade-grid">
               <div class="trade-box ref">
                 <div class="k">Reference Price</div>
@@ -114,7 +117,7 @@
                 <div class="v">${trade.stop}</div>
               </div>
             </div>
-            <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to early-2026 prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry.</p>
+            <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to ${pricesAsOf} prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry.</p>
           </div>`
         : "";
 
