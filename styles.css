@@ -87,20 +87,41 @@ body {
 .up { color: var(--green); font-weight: 700; }
 .down { color: var(--red); font-weight: 700; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tape-scroll {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 6px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+.tape-track {
+  display: flex;
+  width: max-content;
+  animation: tape-scroll 45s linear infinite;
+}
+.tape-scroll:hover .tape-track { animation-play-state: paused; }
+@keyframes tape-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tape-track { animation: none; flex-wrap: wrap; width: auto; }
+}
 .chip {
   display: inline-flex;
   gap: 6px;
   align-items: baseline;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 0.8rem;
+  white-space: nowrap;
+  padding: 2px 14px;
+  margin-right: 4px;
+  border-right: 1px solid var(--border);
+  font-size: 0.82rem;
   color: var(--text);
   text-decoration: none;
 }
-.chip:hover { border-color: var(--accent); }
+.chip:hover strong { color: var(--accent); }
 .chip-q { color: var(--muted); }
 
 .tabs {

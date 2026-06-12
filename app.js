@@ -135,7 +135,8 @@
     const pct = (chg / q.prev) * 100;
     const cls = chg >= 0 ? "up" : "down";
     const sign = chg >= 0 ? "+" : "";
-    return `<span class="${cls}">${sign}${chg.toFixed(2)} (${sign}${pct.toFixed(2)}%)</span>`;
+    const arrow = chg >= 0 ? "▲" : "▼";
+    return `<span class="${cls}">${arrow} ${sign}${chg.toFixed(2)} (${sign}${pct.toFixed(2)}%)</span>`;
   }
 
   function fillQuoteBox(slot, ySym, tvSymbol) {
@@ -161,45 +162,78 @@
     });
   }
 
+  // Scrolling marquee tape for SG/MY, mimicking TradingView's ticker tape.
+  // The chip row is duplicated so a translateX(-50%) loop is seamless.
+  let tapeTimer = null;
+
   function renderQuoteChips(market) {
     const tape = document.getElementById("tape");
-    tape.innerHTML = `<div class="chips"></div>`;
-    const chipsEl = tape.querySelector(".chips");
+    if (tapeTimer) {
+      clearInterval(tapeTimer);
+      tapeTimer = null;
+    }
+    tape.innerHTML = `<div class="tape-scroll"><div class="tape-track"></div></div>`;
+    const track = tape.querySelector(".tape-track");
     const yh = YH_SYMBOLS[market.id];
     const tv = typeof TV_SYMBOLS !== "undefined" ? TV_SYMBOLS[market.id] : {};
+
+    const entries = [];
     market.industries.forEach((ind) =>
       ind.stocks.forEach((s) => {
-        const ySym = yh[s.ticker];
-        if (!ySym) return;
-        const chip = document.createElement("a");
-        chip.className = "chip";
-        chip.href = tv && tv[s.ticker] ? tvPageUrl(tv[s.ticker]) : "#";
-        chip.target = "_blank";
-        chip.rel = "noopener";
-        chip.innerHTML = `<strong>${s.ticker}</strong> <span class="chip-q">…</span>`;
-        chipsEl.appendChild(chip);
-        fetchYahooQuote(ySym).then((q) => {
-          const qEl = chip.querySelector(".chip-q");
-          if (!q) {
-            qEl.textContent = "–";
-            return;
-          }
-          const pct = q.prev ? (((q.price - q.prev) / q.prev) * 100) : null;
-          const cls = pct != null && pct < 0 ? "down" : "up";
-          qEl.innerHTML =
-            q.price.toFixed(q.price >= 100 ? 2 : 3) +
-            (pct != null ? ` <span class="${cls}">${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%</span>` : "");
-        });
+        if (yh[s.ticker]) entries.push({ ticker: s.ticker, ySym: yh[s.ticker], tvSym: tv && tv[s.ticker] });
       })
     );
+
+    const copies = [[], []];
+    for (let pass = 0; pass < 2; pass++) {
+      for (const e of entries) {
+        const chip = document.createElement("a");
+        chip.className = "chip";
+        chip.href = e.tvSym ? tvPageUrl(e.tvSym) : "#";
+        chip.target = "_blank";
+        chip.rel = "noopener";
+        if (pass === 1) chip.setAttribute("aria-hidden", "true");
+        chip.innerHTML = `<strong>${e.ticker}</strong> <span class="chip-q">…</span>`;
+        copies[pass].push(chip);
+        track.appendChild(chip);
+      }
+    }
+
+    const update = () => {
+      entries.forEach((e, i) => {
+        fetchYahooQuote(e.ySym).then((q) => {
+          let html;
+          if (!q) {
+            html = "–";
+          } else {
+            const pct = q.prev ? ((q.price - q.prev) / q.prev) * 100 : null;
+            const cls = pct != null && pct < 0 ? "down" : "up";
+            const arrow = pct != null && pct < 0 ? "▼" : "▲";
+            html =
+              q.price.toFixed(q.price >= 100 ? 2 : 3) +
+              (pct != null
+                ? ` <span class="${cls}">${arrow} ${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%</span>`
+                : "");
+          }
+          copies[0][i].querySelector(".chip-q").innerHTML = html;
+          copies[1][i].querySelector(".chip-q").innerHTML = html;
+        });
+      });
+    };
+    update();
+    tapeTimer = setInterval(update, 5.5 * 60 * 1000);
   }
 
   function renderTickerTape(market) {
     // SGX/Bursa aren't licensed in TradingView's embed datafeed — use the
-    // Yahoo-backed chips for those markets instead.
+    // Yahoo-backed scrolling tape for those markets instead.
     if (typeof YH_SYMBOLS !== "undefined" && YH_SYMBOLS[market.id]) {
       renderQuoteChips(market);
       return;
+    }
+    if (tapeTimer) {
+      clearInterval(tapeTimer);
+      tapeTimer = null;
     }
     const tape = document.getElementById("tape");
     tape.innerHTML = "";
