@@ -49,6 +49,8 @@ Each stock card includes:
   (~11–20% below the zone, scaled to the stock's risk rating), analyst **consensus
   target**, and a computed **risk : reward ratio**. Stocks whose consensus target sits
   below the current price get an explicit downside warning instead.
+- **Live quote** — real-time/delayed market price via the official TradingView embed
+  widget (US, SGX and Bursa symbols), plus a scrolling ticker tape for the active market
 - **Why it ranks here** — explicit comparison against the alternatives
 
 > ⚠️ Prices and targets were gathered late May – 11 June 2026 and do **not** update

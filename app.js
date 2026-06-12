@@ -63,6 +63,54 @@
     valuation: "Valuation",
   };
 
+  // TradingView embed widgets (official, free). Scripts must be created via
+  // createElement — <script> tags inside innerHTML never execute.
+  function tvEmbed(widgetFile, config) {
+    const container = document.createElement("div");
+    container.className = "tradingview-widget-container";
+    const inner = document.createElement("div");
+    inner.className = "tradingview-widget-container__widget";
+    container.appendChild(inner);
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/" + widgetFile;
+    script.async = true;
+    script.textContent = JSON.stringify(config);
+    container.appendChild(script);
+    return container;
+  }
+
+  function tvSingleQuote(symbol) {
+    return tvEmbed("embed-widget-single-quote.js", {
+      symbol: symbol,
+      width: "100%",
+      isTransparent: true,
+      colorTheme: "dark",
+      locale: "en",
+    });
+  }
+
+  function renderTickerTape(market) {
+    const tape = document.getElementById("tape");
+    tape.innerHTML = "";
+    const tv = typeof TV_SYMBOLS !== "undefined" ? TV_SYMBOLS[market.id] : null;
+    if (!tv) return;
+    const symbols = market.industries.flatMap((ind) =>
+      ind.stocks
+        .filter((s) => tv[s.ticker])
+        .map((s) => ({ proName: tv[s.ticker], title: s.ticker }))
+    );
+    tape.appendChild(
+      tvEmbed("embed-widget-ticker-tape.js", {
+        symbols: symbols,
+        showSymbolLogo: true,
+        isTransparent: true,
+        colorTheme: "dark",
+        displayMode: "adaptive",
+        locale: "en",
+      })
+    );
+  }
+
   function fmtMoney(v, cur) {
     if (v >= 100) return cur + Math.round(v).toLocaleString("en-US");
     if (v >= 20) return cur + v.toFixed(1);
@@ -143,6 +191,15 @@
 
       const trade = (typeof TRADE_LEVELS !== "undefined" && TRADE_LEVELS[market.id] && TRADE_LEVELS[market.id][s.ticker]) || null;
       const tradeHtml = trade ? tradePlanHtml(trade, STOCK_DATA.pricesAsOf || "early 2026") : "";
+      const tvSymbol = (typeof TV_SYMBOLS !== "undefined" && TV_SYMBOLS[market.id] && TV_SYMBOLS[market.id][s.ticker]) || null;
+      const liveHtml = tvSymbol
+        ? `
+          <div class="section">
+            <h3>Live Quote — TradingView</h3>
+            <div class="tv-slot"></div>
+            <p class="tv-note">Live market data via TradingView (some exchanges delayed ~15 min). Compare against the dated reference levels below.</p>
+          </div>`
+        : "";
 
       card.innerHTML = `
         <div class="card-head" role="button" tabindex="0" aria-expanded="${i === 0}">
@@ -170,6 +227,7 @@
             <h3>Key Metrics</h3>
             <div class="metrics-grid">${metricsHtml}</div>
           </div>
+          ${liveHtml}
           ${tradeHtml}
           <div class="section">
             <h3>Competitive Moat</h3>
@@ -191,6 +249,9 @@
           </div>
         </div>`;
 
+      const slot = card.querySelector(".tv-slot");
+      if (slot && tvSymbol) slot.appendChild(tvSingleQuote(tvSymbol));
+
       const head = card.querySelector(".card-head");
       const toggle = () => {
         card.classList.toggle("open");
@@ -209,6 +270,7 @@
   }
 
   function renderIndustryTabs(market) {
+    renderTickerTape(market);
     tabsEl.innerHTML = "";
     market.industries.forEach((industry, i) => {
       const btn = document.createElement("button");

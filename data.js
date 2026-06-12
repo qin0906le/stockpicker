@@ -1600,3 +1600,28 @@ const TRADE_LEVELS = {
     HARTA: { cur: "RM", price: 1.34, date: "13 May 2026", buyLo: 1.25, buyHi: 1.34, stop: 1.04, riskPct: 20, target: 1.63, note: "High-risk cyclical — respect the stop strictly; quote from mid-May 2026" },
   },
 };
+
+// TradingView symbol mapping for live-quote widgets (exchange:ticker)
+const TV_SYMBOLS = {
+  US: {
+    NVDA: "NASDAQ:NVDA", TSM: "NYSE:TSM", AVGO: "NASDAQ:AVGO",
+    CRWD: "NASDAQ:CRWD", PANW: "NASDAQ:PANW", ZS: "NASDAQ:ZS",
+    LLY: "NYSE:LLY", ISRG: "NASDAQ:ISRG", ABBV: "NYSE:ABBV",
+    V: "NYSE:V", MA: "NYSE:MA", AXP: "NYSE:AXP",
+    XOM: "NYSE:XOM", CEG: "NASDAQ:CEG", CVX: "NYSE:CVX",
+  },
+  SG: {
+    DBS: "SGX:D05", OCBC: "SGX:O39", UOB: "SGX:U11",
+    CICT: "SGX:C38U", KDCREIT: "SGX:AJBU", CLAR: "SGX:A17U",
+    STENG: "SGX:S63", YZJ: "SGX:BS6", SATS: "SGX:S58",
+    SINGTEL: "SGX:Z74", IFAST: "SGX:AIY", VENTURE: "SGX:V03",
+    SHENG: "SGX:OV8", RAFFLES: "SGX:BSL", DFI: "SGX:D01",
+  },
+  MY: {
+    PBBANK: "MYX:PBBANK", MAYBANK: "MYX:MAYBANK", CIMB: "MYX:CIMB",
+    TENAGA: "MYX:TENAGA", YTLPOWR: "MYX:YTLPOWR", PETGAS: "MYX:PETGAS",
+    FRONTKN: "MYX:FRONTKN", VITROX: "MYX:VITROX", INARI: "MYX:INARI",
+    "99SMART": "MYX:99SMART", MRDIY: "MYX:MRDIY", QL: "MYX:QL",
+    IHH: "MYX:IHH", KPJ: "MYX:KPJ", HARTA: "MYX:HARTA",
+  },
+};
