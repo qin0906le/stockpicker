@@ -78,6 +78,31 @@ body {
 .tv-slot { border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); padding: 4px; }
 .tv-note { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
 
+.yq { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 10px 12px; }
+.yq-price { font-size: 1.4rem; font-weight: 800; }
+.yq-cur { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.yq-loading { color: var(--muted); font-size: 0.9rem; }
+.yq-meta { font-size: 0.78rem; color: var(--muted); }
+.yq-meta a { color: var(--accent); }
+.up { color: var(--green); font-weight: 700; }
+.down { color: var(--red); font-weight: 700; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.chip:hover { border-color: var(--accent); }
+.chip-q { color: var(--muted); }
+
 .tabs {
   display: flex;
   flex-wrap: wrap;

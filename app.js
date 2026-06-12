@@ -89,7 +89,118 @@
     });
   }
 
+  function tvPageUrl(tvSymbol) {
+    return "https://www.tradingview.com/symbols/" + tvSymbol.replace(":", "-") + "/";
+  }
+
+  // Yahoo Finance quote fetcher for SGX/Bursa (not licensed in TV widgets).
+  // Direct fetch fails CORS in browsers, so fall through public CORS proxies.
+  const PROXY_WRAPPERS = [
+    (u) => u,
+    (u) => "https://corsproxy.io/?url=" + encodeURIComponent(u),
+    (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  ];
+  const quoteCache = {};
+
+  async function fetchYahooQuote(ySym) {
+    const cached = quoteCache[ySym];
+    if (cached && Date.now() - cached.at < 5 * 60 * 1000) return cached.q;
+    const url = "https://query1.finance.yahoo.com/v8/finance/chart/" + ySym + "?range=1d&interval=1d";
+    for (const wrap of PROXY_WRAPPERS) {
+      try {
+        const r = await fetch(wrap(url));
+        if (!r.ok) continue;
+        const j = await r.json();
+        const meta = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta;
+        if (!meta || meta.regularMarketPrice == null) continue;
+        const prev = meta.chartPreviousClose != null ? meta.chartPreviousClose : meta.previousClose;
+        const q = {
+          price: meta.regularMarketPrice,
+          prev: prev,
+          currency: meta.currency || "",
+          time: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000) : null,
+        };
+        quoteCache[ySym] = { q, at: Date.now() };
+        return q;
+      } catch (e) {
+        // try next proxy
+      }
+    }
+    return null;
+  }
+
+  function changeHtml(q) {
+    if (q.prev == null || !q.prev) return "";
+    const chg = q.price - q.prev;
+    const pct = (chg / q.prev) * 100;
+    const cls = chg >= 0 ? "up" : "down";
+    const sign = chg >= 0 ? "+" : "";
+    return `<span class="${cls}">${sign}${chg.toFixed(2)} (${sign}${pct.toFixed(2)}%)</span>`;
+  }
+
+  function fillQuoteBox(slot, ySym, tvSymbol) {
+    slot.innerHTML = `<div class="yq"><span class="yq-loading">Loading live quote…</span></div>`;
+    fetchYahooQuote(ySym).then((q) => {
+      if (q) {
+        const when = q.time
+          ? q.time.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+          : "";
+        slot.innerHTML = `
+          <div class="yq">
+            <span class="yq-price">${q.price.toFixed(q.price >= 100 ? 2 : 3)} <span class="yq-cur">${q.currency}</span></span>
+            ${changeHtml(q)}
+            <span class="yq-meta">${when} · Yahoo Finance · <a href="${tvPageUrl(tvSymbol)}" target="_blank" rel="noopener">TradingView ↗</a></span>
+          </div>`;
+      } else {
+        slot.innerHTML = `
+          <div class="yq">
+            <span class="yq-meta">Live quote unavailable right now —
+            <a href="${tvPageUrl(tvSymbol)}" target="_blank" rel="noopener">view live chart on TradingView ↗</a></span>
+          </div>`;
+      }
+    });
+  }
+
+  function renderQuoteChips(market) {
+    const tape = document.getElementById("tape");
+    tape.innerHTML = `<div class="chips"></div>`;
+    const chipsEl = tape.querySelector(".chips");
+    const yh = YH_SYMBOLS[market.id];
+    const tv = typeof TV_SYMBOLS !== "undefined" ? TV_SYMBOLS[market.id] : {};
+    market.industries.forEach((ind) =>
+      ind.stocks.forEach((s) => {
+        const ySym = yh[s.ticker];
+        if (!ySym) return;
+        const chip = document.createElement("a");
+        chip.className = "chip";
+        chip.href = tv && tv[s.ticker] ? tvPageUrl(tv[s.ticker]) : "#";
+        chip.target = "_blank";
+        chip.rel = "noopener";
+        chip.innerHTML = `<strong>${s.ticker}</strong> <span class="chip-q">…</span>`;
+        chipsEl.appendChild(chip);
+        fetchYahooQuote(ySym).then((q) => {
+          const qEl = chip.querySelector(".chip-q");
+          if (!q) {
+            qEl.textContent = "–";
+            return;
+          }
+          const pct = q.prev ? (((q.price - q.prev) / q.prev) * 100) : null;
+          const cls = pct != null && pct < 0 ? "down" : "up";
+          qEl.innerHTML =
+            q.price.toFixed(q.price >= 100 ? 2 : 3) +
+            (pct != null ? ` <span class="${cls}">${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%</span>` : "");
+        });
+      })
+    );
+  }
+
   function renderTickerTape(market) {
+    // SGX/Bursa aren't licensed in TradingView's embed datafeed — use the
+    // Yahoo-backed chips for those markets instead.
+    if (typeof YH_SYMBOLS !== "undefined" && YH_SYMBOLS[market.id]) {
+      renderQuoteChips(market);
+      return;
+    }
     const tape = document.getElementById("tape");
     tape.innerHTML = "";
     const tv = typeof TV_SYMBOLS !== "undefined" ? TV_SYMBOLS[market.id] : null;
@@ -192,12 +303,14 @@
       const trade = (typeof TRADE_LEVELS !== "undefined" && TRADE_LEVELS[market.id] && TRADE_LEVELS[market.id][s.ticker]) || null;
       const tradeHtml = trade ? tradePlanHtml(trade, STOCK_DATA.pricesAsOf || "early 2026") : "";
       const tvSymbol = (typeof TV_SYMBOLS !== "undefined" && TV_SYMBOLS[market.id] && TV_SYMBOLS[market.id][s.ticker]) || null;
-      const liveHtml = tvSymbol
+      const ySymbol = (typeof YH_SYMBOLS !== "undefined" && YH_SYMBOLS[market.id] && YH_SYMBOLS[market.id][s.ticker]) || null;
+      const liveSource = ySymbol ? "Yahoo Finance (SGX/Bursa delayed ~15–20 min)" : "TradingView";
+      const liveHtml = tvSymbol || ySymbol
         ? `
           <div class="section">
-            <h3>Live Quote — TradingView</h3>
+            <h3>Live Quote</h3>
             <div class="tv-slot"></div>
-            <p class="tv-note">Live market data via TradingView (some exchanges delayed ~15 min). Compare against the dated reference levels below.</p>
+            <p class="tv-note">Live market data via ${liveSource}. Compare against the dated reference levels below.</p>
           </div>`
         : "";
 
@@ -250,7 +363,10 @@
         </div>`;
 
       const slot = card.querySelector(".tv-slot");
-      if (slot && tvSymbol) slot.appendChild(tvSingleQuote(tvSymbol));
+      if (slot) {
+        if (ySymbol) fillQuoteBox(slot, ySymbol, tvSymbol || "");
+        else if (tvSymbol) slot.appendChild(tvSingleQuote(tvSymbol));
+      }
 
       const head = card.querySelector(".card-head");
       const toggle = () => {

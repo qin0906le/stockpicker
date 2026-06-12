@@ -1625,3 +1625,23 @@ const TV_SYMBOLS = {
     IHH: "MYX:IHH", KPJ: "MYX:KPJ", HARTA: "MYX:HARTA",
   },
 };
+
+// Yahoo Finance symbols for SG/MY live quotes — TradingView's embed widgets
+// don't have redistribution rights for SGX/Bursa, so those are fetched
+// client-side from Yahoo's chart API instead.
+const YH_SYMBOLS = {
+  SG: {
+    DBS: "D05.SI", OCBC: "O39.SI", UOB: "U11.SI",
+    CICT: "C38U.SI", KDCREIT: "AJBU.SI", CLAR: "A17U.SI",
+    STENG: "S63.SI", YZJ: "BS6.SI", SATS: "S58.SI",
+    SINGTEL: "Z74.SI", IFAST: "AIY.SI", VENTURE: "V03.SI",
+    SHENG: "OV8.SI", RAFFLES: "BSL.SI", DFI: "D01.SI",
+  },
+  MY: {
+    PBBANK: "1295.KL", MAYBANK: "1155.KL", CIMB: "1023.KL",
+    TENAGA: "5347.KL", YTLPOWR: "6742.KL", PETGAS: "6033.KL",
+    FRONTKN: "0128.KL", VITROX: "0097.KL", INARI: "0166.KL",
+    "99SMART": "5326.KL", MRDIY: "5296.KL", QL: "7084.KL",
+    IHH: "5225.KL", KPJ: "5878.KL", HARTA: "5168.KL",
+  },
+};
