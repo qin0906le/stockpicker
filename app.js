@@ -262,6 +262,57 @@
     return cur + v.toFixed(2);
   }
 
+  // Yahoo symbol for any market: SG/MY come from YH_SYMBOLS, US tickers are
+  // valid Yahoo symbols as-is. Used to drive the live-vs-plan status line.
+  function yahooSymbolFor(marketId, ticker) {
+    if (typeof YH_SYMBOLS !== "undefined" && YH_SYMBOLS[marketId] && YH_SYMBOLS[marketId][ticker])
+      return YH_SYMBOLS[marketId][ticker];
+    if (marketId === "US") return ticker;
+    return null;
+  }
+
+  // Compare the LIVE price against the (dated) trade plan so the plan stays
+  // actionable between manual refreshes.
+  function fillLiveStatus(el, trade, ySym) {
+    fetchYahooQuote(ySym).then((q) => {
+      if (!q || q.price == null) {
+        el.innerHTML = "";
+        return;
+      }
+      const p = q.price;
+      const cur = trade.cur;
+
+      let zone, dotCls;
+      if (p < trade.buyLo) {
+        const pct = ((trade.buyLo - p) / trade.buyLo) * 100;
+        zone = `<strong>${pct.toFixed(1)}% below</strong> the buy zone`;
+        dotCls = "ls-blue";
+      } else if (p <= trade.buyHi) {
+        zone = `<strong>inside</strong> the buy zone`;
+        dotCls = "ls-green";
+      } else {
+        const pct = ((p - trade.buyHi) / trade.buyHi) * 100;
+        zone = `<strong>${pct.toFixed(1)}% above</strong> the buy zone — wait for a pullback`;
+        dotCls = "ls-amber";
+      }
+
+      let rr;
+      if (p <= trade.stop) {
+        rr = `<span class="down">⚠️ at/below the cut-loss — thesis needs review</span>`;
+        dotCls = "ls-red";
+      } else if (trade.target <= p) {
+        rr = `<span class="warn">at/above consensus target — limited upside</span>`;
+      } else {
+        const ratio = (trade.target - p) / (p - trade.stop);
+        const up = (trade.target / p - 1) * 100;
+        const dn = (1 - trade.stop / p) * 100;
+        rr = `live R:R ≈ <strong>1 : ${ratio.toFixed(1)}</strong> (${up.toFixed(0)}% up / ${dn.toFixed(0)}% down)`;
+      }
+
+      el.innerHTML = `<span class="ls-dot ${dotCls}"></span><span class="ls-now">Now ${fmtMoney(p, cur)}</span> — ${zone} · ${rr}`;
+    });
+  }
+
   function tradePlanHtml(trade, pricesAsOf) {
     const entry = (trade.buyLo + trade.buyHi) / 2;
     const riskAmt = entry - trade.stop;
@@ -296,7 +347,8 @@
           </div>
         </div>
         ${rrLine}
-        <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Anchored to ${pricesAsOf} prices — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry. Consensus targets are analyst averages, not guarantees.</p>
+        <div class="live-status"><span class="ls-loading">Checking live price vs. plan…</span></div>
+        <p class="trade-note">${trade.note ? trade.note + " · " : ""}⚠️ Reference levels anchored to ${pricesAsOf} prices; the "Now" line above is live — check the live quote first. If the price has run well above the buy zone, wait for a pullback rather than chasing; if it has fallen through the cut-loss, the original thesis needs re-examination, not a cheaper entry. Consensus targets are analyst averages, not guarantees.</p>
       </div>`;
   }
 
@@ -401,6 +453,10 @@
         if (ySymbol) fillQuoteBox(slot, ySymbol, tvSymbol || "");
         else if (tvSymbol) slot.appendChild(tvSingleQuote(tvSymbol));
       }
+
+      const lsEl = card.querySelector(".live-status");
+      const ySymForStatus = yahooSymbolFor(market.id, s.ticker);
+      if (lsEl && trade && ySymForStatus) fillLiveStatus(lsEl, trade, ySymForStatus);
 
       const head = card.querySelector(".card-head");
       const toggle = () => {

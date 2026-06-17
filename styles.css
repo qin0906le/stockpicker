@@ -296,6 +296,30 @@ ul.list.risks li::before { content: "▼"; color: var(--red); position: absolute
 .trade-box .pct { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
 .rr-line { font-size: 0.9rem; margin-top: 10px; color: var(--text); }
 .rr-line.rr-bad { color: var(--amber); font-weight: 600; }
+
+.live-status {
+  font-size: 0.9rem;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+.ls-loading { color: var(--muted); }
+.ls-now { font-weight: 700; }
+.ls-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+.ls-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.ls-amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.ls-blue { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+.ls-red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.warn { color: var(--amber); font-weight: 700; }
 .trade-note { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
 
 .why-above {
