@@ -8,6 +8,21 @@
     (STOCK_DATA.pricesAsOf ? " · prices as of " + STOCK_DATA.pricesAsOf : "") +
     " · figures approximate · not financial advice";
 
+  // Data-freshness banner: prices are live, but the analysis/levels are dated.
+  const freshEl = document.getElementById("freshness");
+  if (freshEl) {
+    const opened = new Date().toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+    freshEl.innerHTML =
+      `<span class="fresh-dot"></span> Quotes are <strong>live</strong>. ` +
+      `Analysis &amp; trade levels are a dated snapshot (analysis ${STOCK_DATA.asOf}, ` +
+      `levels ${STOCK_DATA.pricesAsOf || "early 2026"}) — treat as a research framework, ` +
+      `not live advice. Opened ${opened}.`;
+  }
+
   // Inline SVG flags — Windows doesn't render flag emojis, so emojis can't be used here
   const FLAG_SVGS = {
     US: `<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
@@ -272,34 +287,40 @@
   }
 
   // Compare the LIVE price against the (dated) trade plan so the plan stays
-  // actionable between manual refreshes.
-  function fillLiveStatus(el, trade, ySym) {
+  // actionable between manual refreshes. Also fills a compact header badge so
+  // the collapsed card is scannable.
+  function fillLiveStatus(el, trade, ySym, badgeEl) {
     fetchYahooQuote(ySym).then((q) => {
       if (!q || q.price == null) {
-        el.innerHTML = "";
+        if (el) el.innerHTML = "";
+        if (badgeEl) badgeEl.innerHTML = "";
         return;
       }
       const p = q.price;
       const cur = trade.cur;
 
-      let zone, dotCls;
+      let zone, dotCls, badgeLabel;
       if (p < trade.buyLo) {
         const pct = ((trade.buyLo - p) / trade.buyLo) * 100;
         zone = `<strong>${pct.toFixed(1)}% below</strong> the buy zone`;
         dotCls = "ls-blue";
+        badgeLabel = `${pct.toFixed(0)}% below zone`;
       } else if (p <= trade.buyHi) {
         zone = `<strong>inside</strong> the buy zone`;
         dotCls = "ls-green";
+        badgeLabel = "In buy zone";
       } else {
         const pct = ((p - trade.buyHi) / trade.buyHi) * 100;
         zone = `<strong>${pct.toFixed(1)}% above</strong> the buy zone — wait for a pullback`;
         dotCls = "ls-amber";
+        badgeLabel = `${pct.toFixed(0)}% above zone`;
       }
 
       let rr;
       if (p <= trade.stop) {
         rr = `<span class="down">⚠️ at/below the cut-loss — thesis needs review</span>`;
         dotCls = "ls-red";
+        badgeLabel = "Below cut-loss";
       } else if (trade.target <= p) {
         rr = `<span class="warn">at/above consensus target — limited upside</span>`;
       } else {
@@ -309,7 +330,10 @@
         rr = `live R:R ≈ <strong>1 : ${ratio.toFixed(1)}</strong> (${up.toFixed(0)}% up / ${dn.toFixed(0)}% down)`;
       }
 
-      el.innerHTML = `<span class="ls-dot ${dotCls}"></span><span class="ls-now">Now ${fmtMoney(p, cur)}</span> — ${zone} · ${rr}`;
+      if (el)
+        el.innerHTML = `<span class="ls-dot ${dotCls}"></span><span class="ls-now">Now ${fmtMoney(p, cur)}</span> — ${zone} · ${rr}`;
+      if (badgeEl)
+        badgeEl.innerHTML = `<span class="ls-dot ${dotCls}"></span>${badgeLabel}`;
     });
   }
 
@@ -408,6 +432,7 @@
             <div class="name">${s.name}</div>
           </div>
           <div class="card-meta">
+            <span class="zone-badge" title="Live price vs. buy zone"></span>
             <div class="confidence">
               <div class="label">Confidence</div>
               <div class="value" style="color:${confColor(s.confidence)}">${s.confidence}/100</div>
@@ -455,8 +480,9 @@
       }
 
       const lsEl = card.querySelector(".live-status");
+      const badgeEl = card.querySelector(".zone-badge");
       const ySymForStatus = yahooSymbolFor(market.id, s.ticker);
-      if (lsEl && trade && ySymForStatus) fillLiveStatus(lsEl, trade, ySymForStatus);
+      if (trade && ySymForStatus) fillLiveStatus(lsEl, trade, ySymForStatus, badgeEl);
 
       const head = card.querySelector(".card-head");
       const toggle = () => {
